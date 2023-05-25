@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Input the amount of hours you have studied and get your chances to pass STW</h1>
+    <form method="post" action="/Home/CalculateChance">
+        <div class="form-group">
+            <input type="number" class="form-control" name="hoursStudied" placeholder="Enter hours studied" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Click here to know!</button>
+    </form>
+
+    @if (TempData["Chance"] != null)
+    {
+        <h2>Your Chance: @TempData["Chance"]%</h2>
+        <h2>Your Hours Studied: @TempData["HoursStudied"]</h2>
+        <script>
+            setTimeout(function () {
+                window.location.href = "/";
+            }, 5000);
+        </script>
+    }
+
+    <div id="means"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        getMeans();
+
+        $('input[name="hoursStudied"]').on('input', function () {
+            getMeans();
+        });
+    });
+
+    function getMeans() {
+        $.ajax({
+            url: '/Home/GetMeans',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $('#means').html('<p>Mean Hours Studied by your class: ' + data.meanHoursStudied + '</p>' +
+                    '<p>Mean Chance of passing for your class: ' + data.meanChance + '%</p>');
+            }
+        });
+    }
+</script>
